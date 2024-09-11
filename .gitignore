@@ -1,0 +1,27 @@
+# Node.js
+node_modules/
+dist/
+npm-debug.log
+yarn-error.log
+yarn.lock
+
+# Environment variables
+.env
+
+# TypeScript
+*.tsbuildinfo
+*.ts
+
+# Logs
+logs
+*.log
+logs/**/*.log
+
+# IDEs
+.idea/
+.vscode/
+.DS_Store
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
