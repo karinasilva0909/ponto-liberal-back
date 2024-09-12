@@ -8,10 +8,6 @@ yarn.lock
 # Environment variables
 .env
 
-# TypeScript
-*.tsbuildinfo
-*.ts
-
 # Logs
 logs
 *.log
