@@ -1,10 +1,40 @@
-import express from 'express';
-import authMiddleware from '../Middlewares/AuthMiddleware';
+import { Request, Response } from 'express';
 import RoleService from '../services/RoleService';
 
-const router = express.Router();
+const createRole = async (req: Request, res: Response) => {
+    try {
+        if (!req.user || !req.user.username) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
 
-router.post('/role', authMiddleware, RoleService.createRole);
-router.get('/find-all-role', authMiddleware, RoleService.findAllRole);
+        const roleData = {
+            username: req.user.username,
+            ...req.body
+        };
 
-export default router;
+        const result = await RoleService.createRole(roleData);
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(400).json({ error: (error as Error).message });
+    }
+};
+
+const findAllRole = async(req: Request, res: Response) => {
+    try {
+        if (!req.user || !req.user.username) {
+            return res.status(401).json({ message: 'User not authenticated' });
+        }
+
+        const username = req.user.username;
+
+        const result = await RoleService.findAllRole(username);
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(400).json({ error: (error as Error).message });
+    }
+}
+
+export default {
+    createRole,
+    findAllRole
+};

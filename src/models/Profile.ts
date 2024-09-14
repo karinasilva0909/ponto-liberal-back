@@ -1,5 +1,7 @@
-import { Table, Column, Model, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, BelongsToMany, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import { User } from './User';
+import { Gender } from './Gender';
+import { UserProfile } from './UserProfile';
 
 @Table({
   tableName: 'profiles',
@@ -24,13 +26,28 @@ export class Profile extends Model {
   })
   bio?: string;
 
-  @ForeignKey(() => User)
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  state?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  city?: string;
+
+  @ForeignKey(() => Gender)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
-  userId!: number;
+  genderId!: number;
 
-  @BelongsTo(() => User)
-  user!: User;
+  @BelongsTo(() => Gender)
+  gender!: Gender;
+
+  @BelongsToMany(() => User, () => UserProfile)
+  users!: User[];
 }

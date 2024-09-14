@@ -2,6 +2,8 @@ import express from 'express';
 import sequelize from './config/database';
 import UserPublicRoute from './routes/UserPublicsRoute';
 import UserRoute from './routes/UserRoute';
+import RoleRoute from './routes/RoleRoute';
+import GenderRoute from './routes/GenderRoute';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,6 +15,8 @@ app.use(express.json());
 
 app.use('/api/public', UserPublicRoute);
 app.use('/api', UserRoute);
+app.use('/api', RoleRoute);
+app.use('/api', GenderRoute);
 
 const start = async () => {
   try {

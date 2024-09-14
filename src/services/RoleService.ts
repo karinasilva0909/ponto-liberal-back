@@ -1,39 +1,52 @@
 import { Role } from '../models/Role';
-import { Request, Response } from 'express';
 import { Roles } from '../enums/RolesEnum';
-import { Mesages } from '../enums/MessagesEnum';
+import { Messages } from '../enums/MessagesEnum';
+import { User } from '../models/User';
 
-const createRole = async (req: Request, res: Response) => {
+const createRole = async (profileData: { name?: string; username?: string; }) => {
     try {
-        if (req.user?.roleId !== Roles.ADMIN) {
-            return res.status(403).json({ message: 'Access denied. Admins only.' });
-        }
-        const { name } = req.body;
+        const { name, username } = profileData;
+        const userResult = await User.findOne({ where: { username } });
 
-        if (!name) {
-            return res.status(400).json({ message: 'Role name is required' });
+        const role = await Role.findOne({ where: {name} });
+
+        if (!userResult) {
+            throw new Error(Messages.USER_NULL);
         }
 
-        const newRole = await Role.create({ name });
-        return Mesages.CREATE_PROFILE;
+        if (role) {
+            throw new Error(Messages.USER_NULL);
+        }
+
+        await Role.create({
+            name
+        });
+
+        return Messages.CREATE_PROFILE;
+
     } catch (error) {
         throw new Error((error as Error).message);
     }
 };
 
-const findAllRole = async (req: Request, res: Response) => {
+const findAllRole = async (username: string) => {
     try {
-        if (req.user?.roleId !== Roles.ADMIN) {
-            return res.status(403).json({ message: 'Access denied. Admins only.' });
-        }
-        const { name } = req.body;
+        // Buscando o usuário pelo username
+        const user = await User.findOne({ where: { username } });
 
-        if (!name) {
-            return res.status(400).json({ message: 'Role name is required' });
+        // Verifica se o usuário existe
+        if (!user) {
+            throw new Error('User not found');
         }
 
-        const roles = await Role.findAll();
-        return res.status(200).json(roles);
+        // Verifica se o usuário tem permissão de admin
+        if (user.roleId === Roles.ADMIN) {
+            // Retorna todas as roles se o usuário for admin
+            const roles = await Role.findAll();
+            return roles;
+        } else {
+            throw new Error('Access denied. Admins only.');
+        }
     } catch (error) {
         throw new Error((error as Error).message);
     }

@@ -1,6 +1,7 @@
-import { Table, Column, Model, DataType, BelongsTo, ForeignKey, HasOne } from 'sequelize-typescript';
+import { Table, Column, Model, DataType, BelongsToMany, BelongsTo, ForeignKey } from 'sequelize-typescript';
 import { Profile } from './Profile';
 import { Role } from './Role';
+import { UserProfile } from './UserProfile';
 
 @Table({
   tableName: 'users',
@@ -34,10 +35,10 @@ export class User extends Model {
   })
   emailVerified!: boolean;
 
-  @HasOne(() => Profile)
-  profile!: Profile;
+  @BelongsToMany(() => Profile, () => UserProfile)
+  profiles!: Profile[];
 
-  // Cada usuário tem uma única role
+  // Especificar a chave estrangeira para Role
   @ForeignKey(() => Role)
   @Column({
     type: DataType.INTEGER,
