@@ -21,6 +21,21 @@ const createGender = async (genderData: { name?: string }) => {
     }
 };
 
+const findAllGenders = async () => {
+    try {
+
+        const genders = await Gender.findAll({
+            order: [['id', 'ASC']],
+        });
+
+        return genders;
+
+    } catch (error) {
+        throw new Error((error as Error).message);
+    }
+};
+
 export default {
     createGender,
+    findAllGenders,
 };

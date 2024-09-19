@@ -20,6 +20,16 @@ const createGender = async (req: Request, res: Response) => {
     }
 };
 
+const findAllGenders = async (req: Request, res: Response) => {
+    try {
+        const result = await GenderService.findAllGenders(); 
+        res.status(201).json(result);
+    } catch (error) {
+        res.status(400).json({ error: (error as Error).message });
+    }
+};
+
 export default {
     createGender,
+    findAllGenders,
 };
