@@ -13,10 +13,10 @@ const PORT = 57783;
 
 app.use(express.json());
 
-app.use('/api/public', UserPublicRoute);
+app.use('/users/public', UserPublicRoute);
 app.use('/api', UserRoute);
 app.use('/api', RoleRoute);
-app.use('/api', GenderRoute);
+app.use('/genders', GenderRoute);
 
 const start = async () => {
   try {

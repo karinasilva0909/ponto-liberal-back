@@ -1,18 +1,28 @@
 import { Messages } from '../enums/MessagesEnum';
 import { Gender } from '../models/Gender';
+import UserService from './UserService';
 
-const createGender = async (genderData: { name?: string }) => {
+const createGender = async (genderData: { username?: string, name?: string }) => {
     try {
-        const { name } = genderData;
+        const { username, name } = genderData;
+
+        const user = await UserService.findUserByUsername(username!);
+
+        if (!user.profiles.some(profile => profile.id === 1)) {
+            throw new Error(Messages.INSUFFICIENT_PERMISSIONS);
+        }
+
         const genderResult = await Gender.findOne({ where: { name } });
 
         if (genderResult) {
-            throw new Error(Messages.USER_NULL);
+            throw new Error(Messages.GENDER_ALREADY_EXISTS);
         }
 
         await Gender.create({
             name,
         });
+
+        await UserService.updateUserTimestamp({ username: String(username) });
 
         return Messages.CREATE_PROFILE;
 

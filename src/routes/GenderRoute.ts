@@ -5,6 +5,6 @@ import GenderController from '../controllers/GenderController';
 const router = express.Router();
 
 router.post('/gender', authMiddleware, GenderController.createGender);
-router.get('/find-all-genders', GenderController.findAllGenders);
+router.get('/public/find-all-genders', GenderController.findAllGenders);
 
 export default router;

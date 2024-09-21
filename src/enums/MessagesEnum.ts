@@ -11,4 +11,10 @@ export enum Messages {
     EMAIL_VALID = 'E-mail válido!',
     USERNAME_VALID = 'Usuário válido!',
     USER_NOT_AUTENTICATED = 'Usuário não autenticado',
+    UPDATED_SUCCESSFULLY = '',
+    NO_USERS_ONLINE='Não há usuários online no momento',
+    USER_NOT_FOUND = 'User not found.',
+    INSUFFICIENT_PERMISSIONS = 'User does not have permission to perform this action.',
+    GENDER_ALREADY_EXISTS = 'Gender already exists.',
+    USER_NOT_ACTIVE='Usuário não está ativo.'
 }

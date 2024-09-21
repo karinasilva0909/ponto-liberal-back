@@ -31,14 +31,18 @@ export class User extends Model {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: false,
   })
   emailVerified!: boolean;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  active!: boolean;
 
   @BelongsToMany(() => Profile, () => UserProfile)
   profiles!: Profile[];
 
-  // Especificar a chave estrangeira para Role
   @ForeignKey(() => Role)
   @Column({
     type: DataType.INTEGER,

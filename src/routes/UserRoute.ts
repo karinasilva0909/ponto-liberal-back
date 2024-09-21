@@ -1,15 +1,11 @@
 import express from 'express';
 import authMiddleware from '../Middlewares/AuthMiddleware';
+import UserController from '../controllers/UserController';
 
 const router = express.Router();
 
-router.get('/profile', authMiddleware, (req, res) => {
-    if (!req.user) {
-        return res.status(401).json({ message: 'User not authenticated' });
-    }
 
-    res.json({ message: 'Access granted', user: req.user });
-});
+router.get('/update-user-timestamp', authMiddleware, UserController.updateUserTimestamp);
 
 
 export default router;

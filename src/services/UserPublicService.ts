@@ -3,20 +3,17 @@ import { Roles } from '../enums/RolesEnum';
 import { User } from '../models/User';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import UserService from './UserService';
 
 const createUser = async (userData: { username?: string; password?: string; email?: string; }) => {
     try {
         const { username, email, password } = userData;
 
-        // Verifica se o username ou email já existem
-        const userResult = await User.findOne({ where: { username } });
-        const emailResult = await User.findOne({ where: { email } });
-
-        if (userResult) {
+        if (await usernameValidation(userData)) {
             throw new Error(Messages.USERNAME_ALREADY_EXISTS);
         }
 
-        if (emailResult) {
+        if (await emailValidation(userData)) {
             throw new Error(Messages.EMAIL_ALREADY_EXISTS);
         }
 
@@ -27,15 +24,16 @@ const createUser = async (userData: { username?: string; password?: string; emai
             username,
             email,
             password: hashedPassword,
-            roleId: Roles.BASIC
+            roleId: Roles.BASIC,
+            active: false,
+            emailVerified: false
         });
-
-        return newUser;
 
     } catch (error) {
         throw new Error((error as Error).message);
     }
 };
+
 
 const login = async (userData: { username?: string; password?: string; }) => {
     try {
@@ -46,6 +44,8 @@ const login = async (userData: { username?: string; password?: string; }) => {
         }
 
         const userResult = await User.findOne({ where: { username } });
+
+        const userActive = userResult?.active;
 
         if (!userResult) {
             throw new Error(Messages.INVALID_CREDENTIALS);
@@ -63,45 +63,34 @@ const login = async (userData: { username?: string; password?: string; }) => {
             { expiresIn: '1h' }
         );
 
-        return { message: Messages.LOGIN_SUCESS, token };
+        await UserService.updateUserTimestamp({ username: String(username) });
+
+        return { message: Messages.LOGIN_SUCESS, token, userActive };
 
     } catch (error) {
         throw new Error((error as Error).message);
     }
 };
 
-const emailValidation = async (userData: { email?: string; }) => {
+const emailValidation = async (userData: { email?: string; }): Promise<boolean> => {
     try {
         const { email } = userData;
 
         const userResult = await User.findOne({ where: { email } });
 
-        if (userResult) {
-            const error = new Error(Messages.EMAIL_ALREADY_EXISTS);
-            (error as any).statusCode = 409;
-            throw error;
-        }
-
-        return { message: Messages.EMAIL_VALID };
-
+        return !!userResult; // Converte para boolean de forma explícita
     } catch (error) {
         throw error;
     }
 };
 
-const usernameValidation = async (userData: { username?: string; }) => {
+const usernameValidation = async (userData: { username?: string; }): Promise<boolean> => {
     try {
         const { username } = userData;
 
         const userResult = await User.findOne({ where: { username } });
 
-        if (userResult) {
-            const error = new Error(Messages.USERNAME_ALREADY_EXISTS);
-            (error as any).statusCode = 409;
-            throw error;
-        }
-
-        return { message: Messages.EMAIL_VALID };
+        return !!userResult; // Converte para boolean de forma explícita
     } catch (error) {
         throw new Error((error as Error).message);
     }

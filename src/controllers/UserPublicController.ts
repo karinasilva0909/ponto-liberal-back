@@ -20,6 +20,11 @@ const login = async (req: Request, res: Response) => {
         }
 
         const user = await usersPublicService.login({ username: String(username), password: String(password) });
+
+        if (!user.userActive) {
+            throw new Error(Messages.USER_NOT_ACTIVE);
+        }
+
         res.status(200).json(user);
     } catch (error) {
         res.status(400).json({ error: (error as Error).message });
